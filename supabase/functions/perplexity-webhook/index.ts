@@ -37,6 +37,29 @@ serve(async (req) => {
       throw webhookError
     }
 
+    // Insert data into leaderboard_data_1738627088110
+    if (Array.isArray(body)) {
+      for (const record of body) {
+        const { error: leaderboardError } = await supabaseClient
+          .from('leaderboard_data_1738627088110')
+          .insert({
+            "Strategist Region": record["Strategist Region"],
+            "Country": record["Country"],
+            "US State": record["US State"],
+            "School Name": record["School Name"],
+            "Email Domain": record["Email Domain"],
+            "Activations (BTS 2025 Spring)": record["Activations (BTS 2025 Spring)"],
+            "Queries (from BTS 2025 Spring Registrations)": record["Queries (from BTS 2025 Spring Registrations)"],
+            "Queries": record["Queries"]
+          })
+
+        if (leaderboardError) {
+          console.error('Error inserting into leaderboard:', leaderboardError)
+          throw leaderboardError
+        }
+      }
+    }
+
     // Generate table name based on timestamp to ensure uniqueness
     const timestamp = Date.now()
     const tableName = `perplexity_leaderboard_${timestamp}`
