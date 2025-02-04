@@ -23,17 +23,62 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Insert the data into our table
-    const { data, error } = await supabaseClient
-      .from('perplexity_leaderboard_data')
+    // First, store the raw webhook data
+    const { data: webhookData, error: webhookError } = await supabaseClient
+      .from('webhook_entries')
       .insert([{ data: body }])
+      .select()
 
-    if (error) throw error
+    if (webhookError) throw webhookError
 
-    console.log('Successfully stored webhook data')
+    // Generate table name based on timestamp to ensure uniqueness
+    const timestamp = Date.now()
+    const tableName = `perplexity_leaderboard_${timestamp}`
+
+    // Extract column names and types from the first entry
+    const columns = Object.entries(body).map(([key, value]) => {
+      let columnType = 'text'
+      if (typeof value === 'number') columnType = 'numeric'
+      else if (typeof value === 'boolean') columnType = 'boolean'
+      // Escape column names that might contain spaces or special characters
+      const escapedKey = `"${key}"`
+      return `${escapedKey} ${columnType}`
+    })
+
+    // Create the dynamic table
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS ${tableName} (
+        id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        ${columns.join(',\n        ')},
+        created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+      );
+    `
+
+    // Use the database function to create the table
+    const { error: createTableError } = await supabaseClient
+      .rpc('create_dynamic_table', {
+        sql_command: createTableSQL
+      })
+
+    if (createTableError) throw createTableError
+
+    // Insert the data into the new table
+    const insertSQL = `
+      INSERT INTO ${tableName} (${Object.keys(body).map(k => `"${k}"`).join(', ')})
+      VALUES (${Object.values(body).map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')});
+    `
+
+    const { error: insertError } = await supabaseClient
+      .rpc('create_dynamic_table', {
+        sql_command: insertSQL
+      })
+
+    if (insertError) throw insertError
+
+    console.log('Successfully created table and stored data')
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({ success: true, table: tableName }),
       { 
         headers: { 
           ...corsHeaders,
