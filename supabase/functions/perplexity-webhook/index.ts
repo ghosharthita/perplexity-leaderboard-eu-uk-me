@@ -13,6 +13,9 @@ serve(async (req) => {
   }
 
   try {
+    // Log the request headers for debugging
+    console.log('Request headers:', Object.fromEntries(req.headers.entries()));
+
     // Get the request body
     const body = await req.json()
     console.log('Received webhook data:', body)
@@ -29,7 +32,10 @@ serve(async (req) => {
       .insert([{ data: body }])
       .select()
 
-    if (webhookError) throw webhookError
+    if (webhookError) {
+      console.error('Error storing webhook data:', webhookError)
+      throw webhookError
+    }
 
     // Generate table name based on timestamp to ensure uniqueness
     const timestamp = Date.now()
@@ -54,13 +60,18 @@ serve(async (req) => {
       );
     `
 
+    console.log('Creating table with SQL:', createTableSQL)
+
     // Use the database function to create the table
     const { error: createTableError } = await supabaseClient
       .rpc('create_dynamic_table', {
         sql_command: createTableSQL
       })
 
-    if (createTableError) throw createTableError
+    if (createTableError) {
+      console.error('Error creating table:', createTableError)
+      throw createTableError
+    }
 
     // Insert the data into the new table
     const insertSQL = `
@@ -68,12 +79,17 @@ serve(async (req) => {
       VALUES (${Object.values(body).map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')});
     `
 
+    console.log('Inserting data with SQL:', insertSQL)
+
     const { error: insertError } = await supabaseClient
       .rpc('create_dynamic_table', {
         sql_command: insertSQL
       })
 
-    if (insertError) throw insertError
+    if (insertError) {
+      console.error('Error inserting data:', insertError)
+      throw insertError
+    }
 
     console.log('Successfully created table and stored data')
 
