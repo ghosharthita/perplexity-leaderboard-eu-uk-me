@@ -12,15 +12,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: number;
-  "Strategist Region": string | null;
-  Country: string | null;
-  "US State": string | null;
-  "School Name": string | null;
-  "Email Domain": string | null;
-  "Activations (BTS 2025 Spring)": string | null;
-  "Queries (from BTS 2025 Spring Registrations)": string | null;
-  Queries: string | null;
-  created_at: string | null;
+  data: any;
+  created_at: string;
 }
 
 export function LeaderboardTable() {
@@ -30,7 +23,7 @@ export function LeaderboardTable() {
     // Fetch initial data
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from('leaderboard_data_1738627088110')
+        .from('webhook_entries')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -52,7 +45,7 @@ export function LeaderboardTable() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'leaderboard_data_1738627088110'
+          table: 'webhook_entries'
         },
         (payload) => {
           console.log('New entry:', payload);
@@ -68,35 +61,16 @@ export function LeaderboardTable() {
 
   const renderTableHeaders = () => {
     if (entries.length === 0) return null;
-    const headers = [
-      "Strategist Region",
-      "Country",
-      "US State",
-      "School Name",
-      "Email Domain",
-      "Activations (BTS 2025 Spring)",
-      "Queries (from BTS 2025 Spring Registrations)",
-      "Queries"
-    ];
-    return headers.map((header) => (
+    const firstEntry = entries[0].data;
+    return Object.keys(firstEntry).map((header) => (
       <TableHead key={header}>{header}</TableHead>
     ));
   };
 
   const renderTableRow = (entry: LeaderboardEntry) => {
-    const values = [
-      entry["Strategist Region"],
-      entry.Country,
-      entry["US State"],
-      entry["School Name"],
-      entry["Email Domain"],
-      entry["Activations (BTS 2025 Spring)"],
-      entry["Queries (from BTS 2025 Spring Registrations)"],
-      entry.Queries
-    ];
-    return values.map((value, index) => (
+    return Object.values(entry.data).map((value, index) => (
       <TableCell key={index}>
-        {value || '-'}
+        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
       </TableCell>
     ));
   };
