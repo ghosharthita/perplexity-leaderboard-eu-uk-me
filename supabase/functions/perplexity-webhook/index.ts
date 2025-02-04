@@ -42,12 +42,18 @@ serve(async (req) => {
     const tableName = `perplexity_leaderboard_${timestamp}`
 
     // Extract column names and types from the first entry
-    const columns = Object.entries(body).map(([key, value]) => {
+    // Assuming body is an array of objects
+    if (!Array.isArray(body) || body.length === 0) {
+      throw new Error('Expected an array of data objects')
+    }
+
+    const firstEntry = body[0]
+    const columns = Object.entries(firstEntry).map(([key, value]) => {
       let columnType = 'text'
       if (typeof value === 'number') columnType = 'numeric'
       else if (typeof value === 'boolean') columnType = 'boolean'
       // Escape column names that might contain spaces or special characters
-      const escapedKey = `"${key}"`
+      const escapedKey = `"${key.replace(/"/g, '""')}"`
       return `${escapedKey} ${columnType}`
     })
 
@@ -73,22 +79,29 @@ serve(async (req) => {
       throw createTableError
     }
 
-    // Insert the data into the new table
-    const insertSQL = `
-      INSERT INTO ${tableName} (${Object.keys(body).map(k => `"${k}"`).join(', ')})
-      VALUES (${Object.values(body).map(v => typeof v === 'string' ? `'${v}'` : v).join(', ')});
-    `
+    // Insert all records from the array
+    for (const record of body) {
+      const columnNames = Object.keys(record).map(k => `"${k.replace(/"/g, '""')}"`)
+      const values = Object.values(record).map(v => 
+        typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
+      )
 
-    console.log('Inserting data with SQL:', insertSQL)
+      const insertSQL = `
+        INSERT INTO ${tableName} (${columnNames.join(', ')})
+        VALUES (${values.join(', ')});
+      `
 
-    const { error: insertError } = await supabaseClient
-      .rpc('create_dynamic_table', {
-        sql_command: insertSQL
-      })
+      console.log('Inserting data with SQL:', insertSQL)
 
-    if (insertError) {
-      console.error('Error inserting data:', insertError)
-      throw insertError
+      const { error: insertError } = await supabaseClient
+        .rpc('create_dynamic_table', {
+          sql_command: insertSQL
+        })
+
+      if (insertError) {
+        console.error('Error inserting data:', insertError)
+        throw insertError
+      }
     }
 
     console.log('Successfully created table and stored data')
