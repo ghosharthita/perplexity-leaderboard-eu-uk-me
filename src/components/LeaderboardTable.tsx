@@ -12,8 +12,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: number;
-  data: any;
-  created_at: string;
+  "Strategist Region": string | null;
+  Country: string | null;
+  "US State": string | null;
+  "School Name": string | null;
+  "Email Domain": string | null;
+  "Activations (BTS 2025 Spring)": string | null;
+  "Queries (from BTS 2025 Spring Registrations)": string | null;
+  Queries: string | null;
+  created_at: string | null;
 }
 
 export function LeaderboardTable() {
@@ -23,7 +30,7 @@ export function LeaderboardTable() {
     // Fetch initial data
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from('perplexity_leaderboard_data')
+        .from('leaderboard_data_1738627088110')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -45,7 +52,7 @@ export function LeaderboardTable() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'perplexity_leaderboard_data'
+          table: 'leaderboard_data_1738627088110'
         },
         (payload) => {
           console.log('New entry:', payload);
@@ -61,16 +68,35 @@ export function LeaderboardTable() {
 
   const renderTableHeaders = () => {
     if (entries.length === 0) return null;
-    const firstEntry = entries[0].data;
-    return Object.keys(firstEntry).map((header) => (
+    const headers = [
+      "Strategist Region",
+      "Country",
+      "US State",
+      "School Name",
+      "Email Domain",
+      "Activations (BTS 2025 Spring)",
+      "Queries (from BTS 2025 Spring Registrations)",
+      "Queries"
+    ];
+    return headers.map((header) => (
       <TableHead key={header}>{header}</TableHead>
     ));
   };
 
   const renderTableRow = (entry: LeaderboardEntry) => {
-    return Object.values(entry.data).map((value, index) => (
+    const values = [
+      entry["Strategist Region"],
+      entry.Country,
+      entry["US State"],
+      entry["School Name"],
+      entry["Email Domain"],
+      entry["Activations (BTS 2025 Spring)"],
+      entry["Queries (from BTS 2025 Spring Registrations)"],
+      entry.Queries
+    ];
+    return values.map((value, index) => (
       <TableCell key={index}>
-        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+        {value || '-'}
       </TableCell>
     ));
   };
