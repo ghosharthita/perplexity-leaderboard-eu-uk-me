@@ -18,7 +18,7 @@ serve(async (req) => {
 
     // Get the request body
     const body = await req.json()
-    console.log('Received webhook data:', body)
+    console.log('Received webhook data:', JSON.stringify(body, null, 2))
 
     // Initialize Supabase client
     const supabaseClient = createClient(
@@ -33,18 +33,25 @@ serve(async (req) => {
       .select()
 
     if (webhookError) {
-      console.error('Error storing webhook data:', webhookError)
+      console.error('Error storing webhook data:', JSON.stringify(webhookError, null, 2))
       throw webhookError
     }
 
-    // Insert data into leaderboard_data table
+    // Generate table name based on timestamp
+    const timestamp = Date.now()
+    const tableName = `perplexity_leaderboard_${timestamp}`
+
+    // Insert data into current leaderboard table
     if (Array.isArray(body)) {
       for (const record of body) {
         // Skip if Email Domain is empty
-        if (!record["Email Domain"]) continue;
+        if (!record["Email Domain"]) {
+          console.log('Skipping record with empty Email Domain:', record)
+          continue
+        }
 
         const { error: leaderboardError } = await supabaseClient
-          .from('perplexity_leaderboard_1738713770212')
+          .from('perplexity_leaderboard_1738748367828')
           .upsert({
             "Strategist Region": record["Strategist Region"],
             "Country": record["Country"],
@@ -59,105 +66,20 @@ serve(async (req) => {
           })
 
         if (leaderboardError) {
-          console.error('Error upserting into leaderboard:', leaderboardError)
+          console.error('Error upserting into leaderboard:', JSON.stringify(leaderboardError, null, 2))
+          console.error('Failed record:', JSON.stringify(record, null, 2))
           throw leaderboardError
         }
       }
+    } else {
+      console.error('Received non-array payload:', JSON.stringify(body, null, 2))
+      throw new Error('Expected an array of records')
     }
 
-    // Generate table name based on timestamp
-    const timestamp = Date.now()
-    const tableName = `perplexity_leaderboard_${timestamp}`
-
-    // Get list of existing perplexity leaderboard tables
-    const { data: tables, error: tablesError } = await supabaseClient
-      .rpc('get_perplexity_tables')
-
-    if (tablesError) {
-      console.error('Error getting existing tables:', tablesError)
-      throw tablesError
-    }
-
-    // Delete previous tables if they exist
-    if (tables && tables.length > 0) {
-      for (const table of tables) {
-        const dropTableSQL = `DROP TABLE IF EXISTS ${table.table_name};`
-        const { error: dropError } = await supabaseClient
-          .rpc('create_dynamic_table', {
-            sql_command: dropTableSQL
-          })
-
-        if (dropError) {
-          console.error(`Error dropping table ${table.table_name}:`, dropError)
-          throw dropError
-        }
-      }
-    }
-
-    // Extract column names and types from the first entry
-    if (!Array.isArray(body) || body.length === 0) {
-      throw new Error('Expected an array of data objects')
-    }
-
-    const firstEntry = body[0]
-    const columns = Object.entries(firstEntry).map(([key, value]) => {
-      let columnType = 'text'
-      if (typeof value === 'number') columnType = 'numeric'
-      else if (typeof value === 'boolean') columnType = 'boolean'
-      const escapedKey = `"${key.replace(/"/g, '""')}"`
-      return `${escapedKey} ${columnType}`
-    })
-
-    // Create the new dynamic table
-    const createTableSQL = `
-      CREATE TABLE IF NOT EXISTS ${tableName} (
-        id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        ${columns.join(',\n        ')},
-        created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-      );
-    `
-
-    console.log('Creating table with SQL:', createTableSQL)
-
-    const { error: createTableError } = await supabaseClient
-      .rpc('create_dynamic_table', {
-        sql_command: createTableSQL
-      })
-
-    if (createTableError) {
-      console.error('Error creating table:', createTableError)
-      throw createTableError
-    }
-
-    // Insert all records from the array
-    for (const record of body) {
-      const columnNames = Object.keys(record).map(k => `"${k.replace(/"/g, '""')}"`)
-      const values = Object.values(record).map(v => 
-        typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
-      )
-
-      const insertSQL = `
-        INSERT INTO ${tableName} (${columnNames.join(', ')})
-        VALUES (${values.join(', ')});
-      `
-
-      console.log('Inserting data with SQL:', insertSQL)
-
-      const { error: insertError } = await supabaseClient
-        .rpc('create_dynamic_table', {
-          sql_command: insertSQL
-        })
-
-      if (insertError) {
-        console.error('Error inserting data:', insertError)
-        throw insertError
-      }
-    }
-
-    console.log('Successfully created table and stored data')
+    console.log('Successfully processed webhook data')
 
     return new Response(
-      JSON.stringify({ success: true, table: tableName }),
+      JSON.stringify({ success: true }),
       { 
         headers: { 
           ...corsHeaders,
@@ -168,9 +90,12 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error processing webhook:', error)
+    console.error('Error processing webhook:', JSON.stringify(error, null, 2))
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error
+      }),
       { 
         headers: { 
           ...corsHeaders,
