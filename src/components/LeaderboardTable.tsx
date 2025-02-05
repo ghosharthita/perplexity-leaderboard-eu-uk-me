@@ -114,17 +114,15 @@ export function LeaderboardTable() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <img 
-            src="/lovable-uploads/8ba139b6-6d12-4b10-9f32-13bca46b964b.png" 
-            alt="Perplexity Logo" 
-            className="h-12 w-auto"
-          />
-          <h1 className="text-3xl font-bold tracking-tight">
-            Perplexity Europe, Middle East & UK Leaderboard
-          </h1>
-        </div>
+      <div className="flex items-center gap-2 mb-6">
+        <img 
+          src="/lovable-uploads/8ba139b6-6d12-4b10-9f32-13bca46b964b.png" 
+          alt="Perplexity Logo" 
+          className="h-8 w-auto"
+        />
+        <h1 className="text-2xl font-bold tracking-tight">
+          Race to 500
+        </h1>
       </div>
 
       <Card className="bg-[#f8f8f8] border-none shadow-lg">
