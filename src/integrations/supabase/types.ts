@@ -190,6 +190,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_perplexity_tables: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+        }[]
+      }
       increment_signup_count: {
         Args: {
           ref_code: string

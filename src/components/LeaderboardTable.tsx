@@ -15,6 +15,10 @@ interface LeaderboardEntry {
   [key: string]: any;
 }
 
+interface PerplexityTable {
+  table_name: string;
+}
+
 export function LeaderboardTable() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [latestTable, setLatestTable] = useState<string | null>(null);
@@ -23,7 +27,7 @@ export function LeaderboardTable() {
     // Function to get the latest perplexity_leaderboard table
     const getLatestTable = async () => {
       const { data, error } = await supabase
-        .rpc('get_perplexity_tables')
+        .rpc('get_perplexity_tables') as { data: PerplexityTable[] | null, error: any };
 
       if (error) {
         console.error('Error fetching tables:', error);
@@ -45,10 +49,11 @@ export function LeaderboardTable() {
 
     // Fetch initial data from the latest table
     const fetchData = async () => {
-      const { data, error } = await supabase
-        .from(latestTable)
+      // Using type assertion to handle dynamic table name
+      const { data, error } = await (supabase
+        .from(latestTable as any)
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }));
 
       if (error) {
         console.error('Error fetching data:', error);
