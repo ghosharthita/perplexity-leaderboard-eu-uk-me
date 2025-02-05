@@ -72,7 +72,14 @@ export function LeaderboardTable() {
         return;
       }
 
-      setEntries(data || []);
+      // Sort the data by activations in descending order by default
+      const sortedData = (data || []).sort((a, b) => {
+        const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
+        const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
+        return bValue - aValue;
+      });
+
+      setEntries(sortedData);
     };
 
     fetchData();
@@ -89,7 +96,15 @@ export function LeaderboardTable() {
         },
         (payload) => {
           console.log('New entry:', payload);
-          setEntries(current => [payload.new as LeaderboardEntry, ...current]);
+          setEntries(current => {
+            const newEntries = [payload.new as LeaderboardEntry, ...current];
+            // Sort the entries whenever new data comes in
+            return newEntries.sort((a, b) => {
+              const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
+              const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
+              return bValue - aValue;
+            });
+          });
         }
       )
       .subscribe();
