@@ -12,7 +12,7 @@ interface PerplexityTable {
   table_name: string;
 }
 
-type SupabaseTableName = "perplexity_leaderboard_1738713770212" | "leaderboard_data_1738627088110";
+type SupabaseTableName = "perplexity_leaderboard_1738748367828" | "leaderboard_data_1738627088110";
 
 export function LeaderboardTable() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
