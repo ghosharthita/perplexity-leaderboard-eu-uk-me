@@ -9,6 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface LeaderboardEntry {
   id: number;
@@ -19,9 +21,17 @@ interface PerplexityTable {
   table_name: string;
 }
 
+const DISPLAYED_COLUMNS = [
+  "Country",
+  "School Name",
+  "Email Domain",
+  "Activations (BTS 2025 Spring)"
+];
+
 export function LeaderboardTable() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [latestTable, setLatestTable] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     // Function to get the latest perplexity_leaderboard table
@@ -49,7 +59,6 @@ export function LeaderboardTable() {
 
     // Fetch initial data from the latest table
     const fetchData = async () => {
-      // Using type assertion to handle dynamic table name
       const { data, error } = await (supabase
         .from(latestTable as any)
         .select('*')
@@ -87,24 +96,17 @@ export function LeaderboardTable() {
     };
   }, [latestTable]);
 
-  const renderTableHeaders = () => {
-    if (entries.length === 0) return null;
-    const firstEntry = entries[0];
-    return Object.keys(firstEntry)
-      .filter(key => key !== 'id' && key !== 'created_at')
-      .map((header) => (
-        <TableHead key={header}>{header}</TableHead>
-      ));
-  };
-
-  const renderTableRow = (entry: LeaderboardEntry) => {
-    return Object.entries(entry)
-      .filter(([key]) => key !== 'id' && key !== 'created_at')
-      .map(([_, value], index) => (
-        <TableCell key={index}>
-          {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-        </TableCell>
-      ));
+  const handleSort = () => {
+    const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newOrder);
+    
+    const sortedEntries = [...entries].sort((a, b) => {
+      const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
+      const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
+      return newOrder === 'asc' ? aValue - bValue : bValue - aValue;
+    });
+    
+    setEntries(sortedEntries);
   };
 
   return (
@@ -116,12 +118,35 @@ export function LeaderboardTable() {
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              <TableRow>{renderTableHeaders()}</TableRow>
+              <TableRow>
+                {DISPLAYED_COLUMNS.map((header) => (
+                  <TableHead key={header}>
+                    {header === "Activations (BTS 2025 Spring)" ? (
+                      <Button
+                        variant="ghost"
+                        onClick={handleSort}
+                        className="h-8 flex items-center gap-1"
+                      >
+                        {header}
+                        <ArrowUpDown className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      header
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
             </TableHeader>
             <TableBody>
               {entries.map((entry) => (
                 <TableRow key={entry.id}>
-                  {renderTableRow(entry)}
+                  {DISPLAYED_COLUMNS.map((column) => (
+                    <TableCell key={column}>
+                      {typeof entry[column] === 'object' 
+                        ? JSON.stringify(entry[column]) 
+                        : String(entry[column] || '')}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
