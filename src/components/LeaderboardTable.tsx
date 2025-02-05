@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -113,50 +113,80 @@ export function LeaderboardTable() {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Perplexity Leaderboard</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {DISPLAYED_COLUMNS.map((header) => (
-                  <TableHead key={header}>
-                    {header === "Activations (BTS 2025 Spring)" ? (
-                      <Button
-                        variant="ghost"
-                        onClick={handleSort}
-                        className="h-8 flex items-center gap-1"
-                      >
-                        {header}
-                        <ArrowUpDown className="h-4 w-4" />
-                      </Button>
-                    ) : (
-                      header
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entries.map((entry, index) => (
-                <TableRow key={entry.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  {DISPLAYED_COLUMNS.slice(1).map((column) => (
-                    <TableCell key={column}>
-                      {typeof entry[column] === 'object' 
-                        ? JSON.stringify(entry[column]) 
-                        : String(entry[column] || '')}
-                    </TableCell>
+    <div className="max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <img 
+            src="/lovable-uploads/8ba139b6-6d12-4b10-9f32-13bca46b964b.png" 
+            alt="Perplexity Logo" 
+            className="h-12 w-auto"
+          />
+          <h1 className="text-3xl font-bold tracking-tight">
+            Perplexity Europe, Middle East & UK Leaderboard
+          </h1>
+        </div>
+      </div>
+
+      <Card className="bg-[#f8f8f8] border-none shadow-lg">
+        <CardContent className="p-6">
+          <div className="rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b-2 border-gray-200">
+                  {DISPLAYED_COLUMNS.map((header) => (
+                    <TableHead 
+                      key={header}
+                      className="bg-white text-lg font-semibold text-gray-900"
+                    >
+                      {header === "Activations (BTS 2025 Spring)" ? (
+                        <Button
+                          variant="ghost"
+                          onClick={handleSort}
+                          className="h-8 flex items-center gap-1 text-lg font-semibold"
+                        >
+                          {header}
+                          <ArrowUpDown className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        header
+                      )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {entries.map((entry, index) => (
+                  <TableRow 
+                    key={entry.id}
+                    className={`
+                      border-b border-gray-100
+                      ${index < 3 ? 'bg-orange-50' : 'bg-white'}
+                    `}
+                  >
+                    <TableCell className="font-mono text-xl">
+                      {index + 1}
+                    </TableCell>
+                    {DISPLAYED_COLUMNS.slice(1).map((column) => (
+                      <TableCell 
+                        key={column}
+                        className={`
+                          text-lg
+                          ${column === "Activations (BTS 2025 Spring)" ? 'font-mono text-orange-500 font-semibold' : ''}
+                          ${column === "School Name" ? 'font-serif italic' : ''}
+                        `}
+                      >
+                        {typeof entry[column] === 'object' 
+                          ? JSON.stringify(entry[column]) 
+                          : String(entry[column] || '')}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
