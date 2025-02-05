@@ -12,18 +12,41 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface LeaderboardEntry {
   id: number;
-  data: any;
-  created_at: string;
+  [key: string]: any;
 }
 
 export function LeaderboardTable() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [latestTable, setLatestTable] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch initial data
+    // Function to get the latest perplexity_leaderboard table
+    const getLatestTable = async () => {
+      const { data, error } = await supabase
+        .rpc('get_perplexity_tables')
+
+      if (error) {
+        console.error('Error fetching tables:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Sort by table name to get the latest one (they contain timestamps)
+        const sortedTables = data.sort((a, b) => b.table_name.localeCompare(a.table_name));
+        setLatestTable(sortedTables[0].table_name);
+      }
+    };
+
+    getLatestTable();
+  }, []);
+
+  useEffect(() => {
+    if (!latestTable) return;
+
+    // Fetch initial data from the latest table
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from('webhook_entries')
+        .from(latestTable)
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -45,7 +68,7 @@ export function LeaderboardTable() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'webhook_entries'
+          table: latestTable
         },
         (payload) => {
           console.log('New entry:', payload);
@@ -57,22 +80,26 @@ export function LeaderboardTable() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [latestTable]);
 
   const renderTableHeaders = () => {
     if (entries.length === 0) return null;
-    const firstEntry = entries[0].data;
-    return Object.keys(firstEntry).map((header) => (
-      <TableHead key={header}>{header}</TableHead>
-    ));
+    const firstEntry = entries[0];
+    return Object.keys(firstEntry)
+      .filter(key => key !== 'id' && key !== 'created_at')
+      .map((header) => (
+        <TableHead key={header}>{header}</TableHead>
+      ));
   };
 
   const renderTableRow = (entry: LeaderboardEntry) => {
-    return Object.values(entry.data).map((value, index) => (
-      <TableCell key={index}>
-        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-      </TableCell>
-    ));
+    return Object.entries(entry)
+      .filter(([key]) => key !== 'id' && key !== 'created_at')
+      .map(([_, value], index) => (
+        <TableCell key={index}>
+          {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+        </TableCell>
+      ));
   };
 
   return (

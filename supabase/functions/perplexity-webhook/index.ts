@@ -65,12 +65,36 @@ serve(async (req) => {
       }
     }
 
-    // Generate table name based on timestamp to ensure uniqueness
+    // Generate table name based on timestamp
     const timestamp = Date.now()
     const tableName = `perplexity_leaderboard_${timestamp}`
 
+    // Get list of existing perplexity leaderboard tables
+    const { data: tables, error: tablesError } = await supabaseClient
+      .rpc('get_perplexity_tables')
+
+    if (tablesError) {
+      console.error('Error getting existing tables:', tablesError)
+      throw tablesError
+    }
+
+    // Delete previous tables if they exist
+    if (tables && tables.length > 0) {
+      for (const table of tables) {
+        const dropTableSQL = `DROP TABLE IF EXISTS ${table.table_name};`
+        const { error: dropError } = await supabaseClient
+          .rpc('create_dynamic_table', {
+            sql_command: dropTableSQL
+          })
+
+        if (dropError) {
+          console.error(`Error dropping table ${table.table_name}:`, dropError)
+          throw dropError
+        }
+      }
+    }
+
     // Extract column names and types from the first entry
-    // Assuming body is an array of objects
     if (!Array.isArray(body) || body.length === 0) {
       throw new Error('Expected an array of data objects')
     }
@@ -80,12 +104,11 @@ serve(async (req) => {
       let columnType = 'text'
       if (typeof value === 'number') columnType = 'numeric'
       else if (typeof value === 'boolean') columnType = 'boolean'
-      // Escape column names that might contain spaces or special characters
       const escapedKey = `"${key.replace(/"/g, '""')}"`
       return `${escapedKey} ${columnType}`
     })
 
-    // Create the dynamic table
+    // Create the new dynamic table
     const createTableSQL = `
       CREATE TABLE IF NOT EXISTS ${tableName} (
         id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -96,7 +119,6 @@ serve(async (req) => {
 
     console.log('Creating table with SQL:', createTableSQL)
 
-    // Use the database function to create the table
     const { error: createTableError } = await supabaseClient
       .rpc('create_dynamic_table', {
         sql_command: createTableSQL
