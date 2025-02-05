@@ -37,7 +37,7 @@ serve(async (req) => {
       throw webhookError
     }
 
-    // Upsert data into leaderboard_data_1738627088110
+    // Insert data into leaderboard_data table
     if (Array.isArray(body)) {
       for (const record of body) {
         // Skip if Email Domain is empty
@@ -45,7 +45,7 @@ serve(async (req) => {
 
         const { error: leaderboardError } = await supabaseClient
           .from('leaderboard_data_1738627088110')
-          .upsert({
+          .insert({
             "Strategist Region": record["Strategist Region"],
             "Country": record["Country"],
             "US State": record["US State"],
@@ -54,12 +54,10 @@ serve(async (req) => {
             "Activations (BTS 2025 Spring)": record["Activations (BTS 2025 Spring)"],
             "Queries (from BTS 2025 Spring Registrations)": record["Queries (from BTS 2025 Spring Registrations)"],
             "Queries": record["Queries"]
-          }, {
-            onConflict: 'Email Domain'
           })
 
         if (leaderboardError) {
-          console.error('Error upserting into leaderboard:', leaderboardError)
+          console.error('Error inserting into leaderboard:', leaderboardError)
           throw leaderboardError
         }
       }
