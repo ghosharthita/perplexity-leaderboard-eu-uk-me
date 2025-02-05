@@ -21,6 +21,8 @@ interface PerplexityTable {
   table_name: string;
 }
 
+type SupabaseTableName = "perplexity_leaderboard_1738713770212" | "leaderboard_data_1738627088110";
+
 const DISPLAYED_COLUMNS = [
   "#",
   "Country",
@@ -31,7 +33,7 @@ const DISPLAYED_COLUMNS = [
 
 export function LeaderboardTable() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [latestTable, setLatestTable] = useState<string | null>(null);
+  const [latestTable, setLatestTable] = useState<SupabaseTableName | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export function LeaderboardTable() {
       if (data && data.length > 0) {
         // Sort by table name to get the latest one (they contain timestamps)
         const sortedTables = data.sort((a, b) => b.table_name.localeCompare(a.table_name));
-        setLatestTable(sortedTables[0].table_name);
+        setLatestTable(sortedTables[0].table_name as SupabaseTableName);
       }
     };
 
@@ -60,10 +62,10 @@ export function LeaderboardTable() {
 
     // Fetch initial data from the latest table
     const fetchData = async () => {
-      const { data, error } = await (supabase
+      const { data, error } = await supabase
         .from(latestTable)
         .select('*')
-        .order('created_at', { ascending: false }));
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching data:', error);
