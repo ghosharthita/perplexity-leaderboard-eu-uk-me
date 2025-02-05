@@ -136,10 +136,10 @@ export function LeaderboardTable() {
       ) : (
         <Card className="bg-transparent border-none shadow-none overflow-hidden">
           <CardContent className="p-0">
-            <div className="max-h-[70vh] overflow-auto">
+            <div className="max-h-[70vh] overflow-auto relative">
               <Table>
                 <TableHeader className="sticky top-0 bg-[#1C1C1F] z-10">
-                  <TableRow className="border-b border-gray-800">
+                  <TableRow className="border-b border-gray-800 bg-[#2A2A2E]">
                     {DISPLAYED_COLUMNS.map((header) => (
                       <TableHead 
                         key={header}
