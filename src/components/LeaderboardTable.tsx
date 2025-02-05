@@ -22,6 +22,7 @@ interface PerplexityTable {
 }
 
 const DISPLAYED_COLUMNS = [
+  "#",
   "Country",
   "School Name",
   "Email Domain",
@@ -60,7 +61,7 @@ export function LeaderboardTable() {
     // Fetch initial data from the latest table
     const fetchData = async () => {
       const { data, error } = await (supabase
-        .from(latestTable as any)
+        .from(latestTable)
         .select('*')
         .order('created_at', { ascending: false }));
 
@@ -138,9 +139,10 @@ export function LeaderboardTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {entries.map((entry) => (
+              {entries.map((entry, index) => (
                 <TableRow key={entry.id}>
-                  {DISPLAYED_COLUMNS.map((column) => (
+                  <TableCell>{index + 1}</TableCell>
+                  {DISPLAYED_COLUMNS.slice(1).map((column) => (
                     <TableCell key={column}>
                       {typeof entry[column] === 'object' 
                         ? JSON.stringify(entry[column]) 
