@@ -114,77 +114,81 @@ export function LeaderboardTable() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex flex-col items-center gap-4 mb-16">
         <img 
-          src="/lovable-uploads/8ba139b6-6d12-4b10-9f32-13bca46b964b.png" 
+          src="/lovable-uploads/03ef7d83-87db-49cb-ab0c-4973b7598e6d.png" 
           alt="Perplexity Logo" 
-          className="h-10 w-auto"
+          className="h-16 w-auto mb-6"
         />
-        <h1 className="text-2xl font-bold tracking-tight">
-          Race to 500
+        <h1 className="text-4xl font-bold tracking-tight text-white">
+          Perplexity Middle East, Europe & UK Leaderboard
         </h1>
       </div>
 
-      <Card className="bg-white border-none shadow-lg rounded-xl overflow-hidden">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50 border-b border-gray-200">
-                {DISPLAYED_COLUMNS.map((header) => (
-                  <TableHead 
-                    key={header}
-                    className={`
-                      py-4 px-6 text-sm font-semibold text-gray-900
-                      ${header === "School Name" ? 'text-left' : ''}
-                      ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
-                    `}
-                  >
-                    {header === "Activations (BTS 2025 Spring)" ? (
-                      <Button
-                        variant="ghost"
-                        onClick={handleSort}
-                        className="h-8 flex items-center gap-1 font-semibold hover:bg-transparent"
-                      >
-                        {header}
-                        <ArrowUpDown className="h-4 w-4" />
-                      </Button>
-                    ) : (
-                      header
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entries.map((entry, index) => (
-                <TableRow 
-                  key={entry.id}
-                  className={`
-                    border-b border-gray-100 hover:bg-gray-50 transition-colors
-                    ${index < 3 ? 'bg-orange-50/50' : 'bg-white'}
-                  `}
-                >
-                  <TableCell className="py-4 px-6 font-mono text-lg font-semibold">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell className="py-4 px-6">
-                    {entry["Country"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 font-serif italic">
-                    {entry["School Name"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6">
-                    {entry["Email Domain"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 text-right font-mono text-orange-500 font-semibold">
-                    {entry["Activations (BTS 2025 Spring)"]}
-                  </TableCell>
+      {entries.length === 0 ? (
+        <div className="flex flex-col items-center gap-6">
+          <p className="text-gray-400 text-xl">No data available</p>
+          <p className="text-gray-500">Last updated: {new Date().toLocaleString()}</p>
+        </div>
+      ) : (
+        <Card className="bg-transparent border-none shadow-none overflow-hidden">
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-gray-800">
+                  {DISPLAYED_COLUMNS.map((header) => (
+                    <TableHead 
+                      key={header}
+                      className={`
+                        py-4 px-6 text-sm font-semibold text-gray-400
+                        ${header === "School Name" ? 'text-left' : ''}
+                        ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
+                      `}
+                    >
+                      {header === "Activations (BTS 2025 Spring)" ? (
+                        <Button
+                          variant="ghost"
+                          onClick={handleSort}
+                          className="h-8 flex items-center gap-1 font-semibold text-gray-400 hover:text-white hover:bg-transparent"
+                        >
+                          {header}
+                          <ArrowUpDown className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        header
+                      )}
+                    </TableHead>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {entries.map((entry, index) => (
+                  <TableRow 
+                    key={entry.id}
+                    className="border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
+                  >
+                    <TableCell className="py-4 px-6 font-mono text-lg font-semibold text-gray-300">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell className="py-4 px-6 text-gray-300">
+                      {entry["Country"]}
+                    </TableCell>
+                    <TableCell className="py-4 px-6 font-serif italic text-gray-300">
+                      {entry["School Name"]}
+                    </TableCell>
+                    <TableCell className="py-4 px-6 text-gray-300">
+                      {entry["Email Domain"]}
+                    </TableCell>
+                    <TableCell className="py-4 px-6 text-right font-mono text-[#5CCDC9] font-semibold">
+                      {entry["Activations (BTS 2025 Spring)"]}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
