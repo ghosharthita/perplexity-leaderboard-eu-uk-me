@@ -120,15 +120,18 @@ export function LeaderboardTable() {
           alt="Perplexity Logo" 
           className="h-16 w-auto mb-6"
         />
-        <h1 className="text-4xl font-normal tracking-tight text-white">
-          Race to 500
+        <h1 className="text-5xl font-normal tracking-tight text-white mb-2">
+          Leaderboard For Europe, Middle East and the UK
         </h1>
+        <h2 className="text-3xl font-normal text-white/80">
+          Race to 500
+        </h2>
       </div>
 
       {entries.length === 0 ? (
         <div className="flex flex-col items-center gap-6">
-          <p className="text-gray-400 text-xl">No data available</p>
-          <p className="text-gray-500">Last updated: {new Date().toLocaleString()}</p>
+          <p className="text-2xl text-gray-400">No data available</p>
+          <p className="text-xl text-gray-500">Last updated: {new Date().toLocaleString()}</p>
         </div>
       ) : (
         <Card className="bg-transparent border-none shadow-none overflow-hidden">
@@ -141,7 +144,7 @@ export function LeaderboardTable() {
                       <TableHead 
                         key={header}
                         className={`
-                          py-4 px-6 text-sm font-normal text-gray-400
+                          py-4 px-6 text-lg font-normal text-gray-400
                           ${header === "School Name" ? 'text-left' : ''}
                           ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
                         `}
@@ -150,7 +153,7 @@ export function LeaderboardTable() {
                           <Button
                             variant="ghost"
                             onClick={handleSort}
-                            className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent"
+                            className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
                           >
                             {header}
                             <ArrowUpDown className="h-4 w-4" />
@@ -168,19 +171,19 @@ export function LeaderboardTable() {
                       key={entry.id}
                       className="border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
                     >
-                      <TableCell className="py-4 px-6 font-mono text-lg font-normal text-gray-300">
+                      <TableCell className="py-4 px-6 font-mono text-xl font-normal text-gray-300">
                         {index + 1}
                       </TableCell>
-                      <TableCell className="py-4 px-6 text-gray-300">
+                      <TableCell className="py-4 px-6 text-lg text-gray-300">
                         {entry["Country"]}
                       </TableCell>
-                      <TableCell className="py-4 px-6 italic text-gray-300">
+                      <TableCell className="py-4 px-6 italic text-lg text-gray-300">
                         {entry["School Name"]}
                       </TableCell>
-                      <TableCell className="py-4 px-6 text-gray-300">
+                      <TableCell className="py-4 px-6 text-lg text-gray-300">
                         {entry["Email Domain"]}
                       </TableCell>
-                      <TableCell className="py-4 px-6 text-right font-mono text-teal-light font-normal">
+                      <TableCell className="py-4 px-6 text-right font-mono text-xl text-teal-light font-normal">
                         {entry["Activations (BTS 2025 Spring)"]}
                       </TableCell>
                     </TableRow>
