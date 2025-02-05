@@ -44,8 +44,8 @@ serve(async (req) => {
         if (!record["Email Domain"]) continue;
 
         const { error: leaderboardError } = await supabaseClient
-          .from('leaderboard_data_1738627088110')
-          .insert({
+          .from('perplexity_leaderboard_1738713770212')
+          .upsert({
             "Strategist Region": record["Strategist Region"],
             "Country": record["Country"],
             "US State": record["US State"],
@@ -54,10 +54,12 @@ serve(async (req) => {
             "Activations (BTS 2025 Spring)": record["Activations (BTS 2025 Spring)"],
             "Queries (from BTS 2025 Spring Registrations)": record["Queries (from BTS 2025 Spring Registrations)"],
             "Queries": record["Queries"]
+          }, {
+            onConflict: "Email Domain"
           })
 
         if (leaderboardError) {
-          console.error('Error inserting into leaderboard:', leaderboardError)
+          console.error('Error upserting into leaderboard:', leaderboardError)
           throw leaderboardError
         }
       }
