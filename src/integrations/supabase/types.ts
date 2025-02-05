@@ -69,7 +69,7 @@ export type Database = {
         }
         Relationships: []
       }
-      perplexity_leaderboard_1738713770212: {
+      perplexity_leaderboard_1738748367828: {
         Row: {
           "Activations (BTS 2025 Spring)": string | null
           Country: string | null
