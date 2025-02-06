@@ -44,65 +44,48 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
       <CardContent className="p-0">
         {/* Headers Container */}
         <div className="bg-[#2A2A2E] border-b border-gray-800">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {DISPLAYED_COLUMNS.map((header) => (
-                  <TableHead 
-                    key={header}
-                    className={`
-                      py-4 px-6 text-lg font-normal text-gray-400
-                      ${header === "School Name" ? 'text-left' : ''}
-                      ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
-                    `}
-                  >
-                    {header === "Activations (BTS 2025 Spring)" ? (
-                      <Button
-                        variant="ghost"
-                        onClick={onSort}
-                        className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
-                      >
-                        {header}
-                        <ArrowUpDown className="h-4 w-4" />
-                      </Button>
-                    ) : (
-                      header
-                    )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-          </Table>
+          <div className="grid grid-cols-5 py-4 px-6">
+            <div className="text-lg font-normal text-gray-400 text-center">#</div>
+            <div className="text-lg font-normal text-gray-400 text-center">Country</div>
+            <div className="text-lg font-normal text-gray-400 text-left">School Name</div>
+            <div className="text-lg font-normal text-gray-400 text-center">Email Domain</div>
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                onClick={onSort}
+                className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
+              >
+                Activations (BTS 2025 Spring)
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Scrollable Content Container */}
         <div className="max-h-[calc(70vh-80px)] overflow-auto">
-          <Table>
-            <TableBody>
-              {entries.map((entry, index) => (
-                <TableRow 
-                  key={entry.id}
-                  className="border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
-                >
-                  <TableCell className="py-4 px-6 font-mono text-xl font-normal text-gray-300">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 text-lg text-gray-300">
-                    {entry["Country"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 italic text-lg text-gray-300">
-                    {entry["School Name"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 text-lg text-gray-300">
-                    {entry["Email Domain"]}
-                  </TableCell>
-                  <TableCell className="py-4 px-6 text-right font-mono text-xl text-teal-light font-normal">
-                    {entry["Activations (BTS 2025 Spring)"]}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {entries.map((entry, index) => (
+            <div 
+              key={entry.id}
+              className="grid grid-cols-5 py-4 px-6 border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
+            >
+              <div className="font-mono text-xl font-normal text-gray-300 text-center">
+                {index + 1}
+              </div>
+              <div className="text-lg text-gray-300 text-center">
+                {entry["Country"]}
+              </div>
+              <div className="italic text-lg text-gray-300 text-left">
+                {entry["School Name"]}
+              </div>
+              <div className="text-lg text-gray-300 text-center">
+                {entry["Email Domain"]}
+              </div>
+              <div className="font-mono text-xl text-teal-light font-normal text-right">
+                {entry["Activations (BTS 2025 Spring)"]}
+              </div>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
