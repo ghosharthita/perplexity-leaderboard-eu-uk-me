@@ -29,8 +29,7 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   return (
     <Card className="bg-transparent border-none shadow-none">
       <CardContent className="p-0 overflow-x-auto">
-        <div className="min-w-[800px]"> {/* Minimum width to prevent squishing */}
-          {/* Headers Container */}
+        <div className="min-w-[800px]">
           <div className="bg-[#2A2A2E] border-b border-gray-800 sticky top-0">
             <div className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6">
               <div className="text-base md:text-lg font-normal text-gray-400 text-center">#</div>
@@ -43,14 +42,13 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
                   onClick={onSort}
                   className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-base md:text-lg"
                 >
-                  Activations (BTS 2025 Spring)
+                  Activations
                   <ArrowUpDown className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           </div>
 
-          {/* Scrollable Content Container */}
           <div className="max-h-[calc(70vh-80px)] overflow-auto">
             {entries.map((entry, index) => (
               <div 
