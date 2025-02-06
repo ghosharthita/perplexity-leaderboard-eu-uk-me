@@ -1,15 +1,6 @@
-import React from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import LeaderboardTableHeader from "./LeaderboardHeader";
+import LeaderboardRow from "./LeaderboardRow";
 
 interface LeaderboardEntry {
   id: number;
@@ -20,14 +11,6 @@ interface LeaderboardContentProps {
   entries: LeaderboardEntry[];
   onSort: () => void;
 }
-
-const DISPLAYED_COLUMNS = [
-  "#",
-  "Country",
-  "School Name",
-  "Email Domain",
-  "Activations (BTS 2025 Spring)"
-];
 
 const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   if (entries.length === 0) {
@@ -42,49 +25,14 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   return (
     <Card className="bg-transparent border-none shadow-none">
       <CardContent className="p-0">
-        {/* Headers Container */}
-        <div className="bg-[#2A2A2E] border-b border-gray-800">
-          <div className="grid grid-cols-5 py-4 px-6">
-            <div className="text-lg font-normal text-gray-400 text-center">#</div>
-            <div className="text-lg font-normal text-gray-400 text-center">Country</div>
-            <div className="text-lg font-normal text-gray-400 text-left">School Name</div>
-            <div className="text-lg font-normal text-gray-400 text-center">Email Domain</div>
-            <div className="flex justify-end">
-              <Button
-                variant="ghost"
-                onClick={onSort}
-                className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
-              >
-                Activations (BTS 2025 Spring)
-                <ArrowUpDown className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Scrollable Content Container */}
+        <LeaderboardTableHeader onSort={onSort} />
         <div className="max-h-[calc(70vh-80px)] overflow-auto">
           {entries.map((entry, index) => (
-            <div 
+            <LeaderboardRow 
               key={entry.id}
-              className="grid grid-cols-5 py-4 px-6 border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
-            >
-              <div className="font-mono text-xl font-normal text-gray-300 text-center">
-                {index + 1}
-              </div>
-              <div className="text-lg text-gray-300 text-center">
-                {entry["Country"]}
-              </div>
-              <div className="italic text-lg text-gray-300 text-left">
-                {entry["School Name"]}
-              </div>
-              <div className="text-lg text-gray-300 text-center">
-                {entry["Email Domain"]}
-              </div>
-              <div className="font-mono text-xl text-teal-light font-normal text-right">
-                {entry["Activations (BTS 2025 Spring)"]}
-              </div>
-            </div>
+              entry={entry}
+              index={index}
+            />
           ))}
         </div>
       </CardContent>
