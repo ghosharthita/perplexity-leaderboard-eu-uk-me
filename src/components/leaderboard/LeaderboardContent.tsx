@@ -42,15 +42,15 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   return (
     <Card className="bg-transparent border-none shadow-none overflow-hidden">
       <CardContent className="p-0">
-        <div className="max-h-[70vh] overflow-auto relative">
+        <div className="relative max-h-[70vh]">
           <Table>
-            <TableHeader className="sticky top-0 bg-[#1C1C1F] z-10">
-              <TableRow className="border-b border-gray-800 bg-[#2A2A2E]">
+            <TableHeader className="sticky top-0 z-10">
+              <TableRow className="border-b border-gray-800 bg-[#2A2A2E] after:absolute after:left-0 after:right-0 after:bottom-0">
                 {DISPLAYED_COLUMNS.map((header) => (
                   <TableHead 
                     key={header}
                     className={`
-                      py-4 px-6 text-lg font-normal text-gray-400
+                      bg-[#2A2A2E] py-4 px-6 text-lg font-normal text-gray-400
                       ${header === "School Name" ? 'text-left' : ''}
                       ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
                     `}
@@ -71,7 +71,7 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
                 ))}
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="overflow-auto">
               {entries.map((entry, index) => (
                 <TableRow 
                   key={entry.id}
