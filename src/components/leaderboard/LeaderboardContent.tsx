@@ -40,64 +40,69 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   }
 
   return (
-    <Card className="bg-transparent border-none shadow-none overflow-hidden">
+    <Card className="bg-transparent border-none shadow-none">
       <CardContent className="p-0">
-        <div className="relative">
-          <div className="max-h-[70vh] overflow-auto">
-            <Table>
-              <TableHeader className="sticky top-0 z-10">
-                <TableRow className="border-b border-gray-800 bg-[#2A2A2E]">
-                  {DISPLAYED_COLUMNS.map((header) => (
-                    <TableHead 
-                      key={header}
-                      className={`
-                        bg-[#2A2A2E] py-4 px-6 text-lg font-normal text-gray-400
-                        ${header === "School Name" ? 'text-left' : ''}
-                        ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
-                      `}
-                    >
-                      {header === "Activations (BTS 2025 Spring)" ? (
-                        <Button
-                          variant="ghost"
-                          onClick={onSort}
-                          className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
-                        >
-                          {header}
-                          <ArrowUpDown className="h-4 w-4" />
-                        </Button>
-                      ) : (
-                        header
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {entries.map((entry, index) => (
-                  <TableRow 
-                    key={entry.id}
-                    className="border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
+        {/* Headers Container */}
+        <div className="bg-[#2A2A2E] border-b border-gray-800">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {DISPLAYED_COLUMNS.map((header) => (
+                  <TableHead 
+                    key={header}
+                    className={`
+                      py-4 px-6 text-lg font-normal text-gray-400
+                      ${header === "School Name" ? 'text-left' : ''}
+                      ${header === "Activations (BTS 2025 Spring)" ? 'text-right' : ''}
+                    `}
                   >
-                    <TableCell className="py-4 px-6 font-mono text-xl font-normal text-gray-300">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell className="py-4 px-6 text-lg text-gray-300">
-                      {entry["Country"]}
-                    </TableCell>
-                    <TableCell className="py-4 px-6 italic text-lg text-gray-300">
-                      {entry["School Name"]}
-                    </TableCell>
-                    <TableCell className="py-4 px-6 text-lg text-gray-300">
-                      {entry["Email Domain"]}
-                    </TableCell>
-                    <TableCell className="py-4 px-6 text-right font-mono text-xl text-teal-light font-normal">
-                      {entry["Activations (BTS 2025 Spring)"]}
-                    </TableCell>
-                  </TableRow>
+                    {header === "Activations (BTS 2025 Spring)" ? (
+                      <Button
+                        variant="ghost"
+                        onClick={onSort}
+                        className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-lg"
+                      >
+                        {header}
+                        <ArrowUpDown className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      header
+                    )}
+                  </TableHead>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
+              </TableRow>
+            </TableHeader>
+          </Table>
+        </div>
+
+        {/* Scrollable Content Container */}
+        <div className="max-h-[calc(70vh-80px)] overflow-auto">
+          <Table>
+            <TableBody>
+              {entries.map((entry, index) => (
+                <TableRow 
+                  key={entry.id}
+                  className="border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
+                >
+                  <TableCell className="py-4 px-6 font-mono text-xl font-normal text-gray-300">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="py-4 px-6 text-lg text-gray-300">
+                    {entry["Country"]}
+                  </TableCell>
+                  <TableCell className="py-4 px-6 italic text-lg text-gray-300">
+                    {entry["School Name"]}
+                  </TableCell>
+                  <TableCell className="py-4 px-6 text-lg text-gray-300">
+                    {entry["Email Domain"]}
+                  </TableCell>
+                  <TableCell className="py-4 px-6 text-right font-mono text-xl text-teal-light font-normal">
+                    {entry["Activations (BTS 2025 Spring)"]}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
     </Card>
