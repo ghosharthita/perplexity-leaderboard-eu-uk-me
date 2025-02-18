@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Card,
@@ -27,20 +28,20 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   }
 
   return (
-    <Card className="bg-transparent border-none shadow-none">
+    <Card className="bg-gradient-to-br from-[#1F1F23] to-[#2A2A2E] border-none shadow-xl">
       <CardContent className="p-0 overflow-x-auto">
         <div className="min-w-[800px]">
-          <div className="bg-[#2A2A2E] border-b border-gray-800 sticky top-0">
+          <div className="bg-gradient-to-r from-[#2A2A2E] to-[#33333A] border-b border-gray-800/50 sticky top-0 backdrop-blur-sm">
             <div className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6">
-              <div className="text-base md:text-lg font-normal text-gray-400 text-center">#</div>
-              <div className="text-base md:text-lg font-normal text-gray-400 text-center">Country</div>
-              <div className="text-base md:text-lg font-normal text-gray-400 text-left">School Name</div>
-              <div className="text-base md:text-lg font-normal text-gray-400 text-center">Email Domain</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">#</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">Country</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-left">School Name</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">Email Domain</div>
               <div className="flex justify-end">
                 <Button
                   variant="ghost"
                   onClick={onSort}
-                  className="h-8 flex items-center gap-1 font-normal text-gray-400 hover:text-white hover:bg-transparent text-base md:text-lg"
+                  className="h-8 flex items-center gap-1 font-normal text-indigo-200/90 hover:text-white hover:bg-indigo-500/10 text-base md:text-lg transition-colors"
                 >
                   Activations
                   <ArrowUpDown className="h-4 w-4" />
@@ -53,18 +54,18 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
             {entries.map((entry, index) => (
               <div 
                 key={entry.id}
-                className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6 border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
+                className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6 border-b border-gray-800/30 hover:bg-indigo-500/5 transition-colors"
               >
-                <div className="font-mono text-lg md:text-xl font-normal text-gray-300 text-center">
+                <div className="font-mono text-lg md:text-xl font-normal text-indigo-200 text-center">
                   {index + 1}
                 </div>
-                <div className="text-base md:text-lg text-gray-300 text-center">
+                <div className="text-base md:text-lg text-indigo-100/90 text-center">
                   {entry["Country"]}
                 </div>
-                <div className="italic text-base md:text-lg text-gray-300 text-left">
+                <div className="italic text-base md:text-lg text-indigo-100/90 text-left">
                   {entry["School Name"]}
                 </div>
-                <div className="text-base md:text-lg text-gray-300 text-center">
+                <div className="text-base md:text-lg text-indigo-100/90 text-center">
                   {entry["Email Domain"]}
                 </div>
                 <div className="font-mono text-lg md:text-xl text-teal-light font-normal text-right">
