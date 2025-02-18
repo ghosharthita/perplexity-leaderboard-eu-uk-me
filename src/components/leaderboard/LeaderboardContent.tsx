@@ -21,27 +21,27 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
   if (entries.length === 0) {
     return (
       <div className="flex flex-col items-center gap-6">
-        <p className="text-2xl text-gray-600">No data available</p>
+        <p className="text-2xl text-gray-400">No data available</p>
         <p className="text-xl text-gray-500">Last updated: {new Date().toLocaleString()}</p>
       </div>
     );
   }
 
   return (
-    <Card className="bg-gradient-to-br from-[#FEF7CD] to-[#FDE1D3] border-none shadow-xl">
+    <Card className="bg-gradient-to-br from-[#1F1F23] to-[#2A2A2E] border-none shadow-xl">
       <CardContent className="p-0 overflow-x-auto">
         <div className="min-w-[800px]">
-          <div className="bg-gradient-to-r from-[#F2FCE2] to-[#FEF7CD] border-b border-[#8E9196]/20 sticky top-0 backdrop-blur-sm">
+          <div className="bg-gradient-to-r from-[#2A2A2E] to-[#33333A] border-b border-gray-800/50 sticky top-0 backdrop-blur-sm">
             <div className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6">
-              <div className="text-base md:text-lg font-normal text-[#403E43] text-center">#</div>
-              <div className="text-base md:text-lg font-normal text-[#403E43] text-center">Country</div>
-              <div className="text-base md:text-lg font-normal text-[#403E43] text-left">School Name</div>
-              <div className="text-base md:text-lg font-normal text-[#403E43] text-center">Email Domain</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">#</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">Country</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-left">School Name</div>
+              <div className="text-base md:text-lg font-normal text-indigo-200/90 text-center">Email Domain</div>
               <div className="flex justify-end">
                 <Button
                   variant="ghost"
                   onClick={onSort}
-                  className="h-8 flex items-center gap-1 font-normal text-[#403E43] hover:text-[#222222] hover:bg-[#9b87f5]/10 text-base md:text-lg transition-colors"
+                  className="h-8 flex items-center gap-1 font-normal text-indigo-200/90 hover:text-white hover:bg-indigo-500/10 text-base md:text-lg transition-colors"
                 >
                   Activations
                   <ArrowUpDown className="h-4 w-4" />
@@ -54,21 +54,21 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
             {entries.map((entry, index) => (
               <div 
                 key={entry.id}
-                className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6 border-b border-[#8E9196]/20 hover:bg-[#9b87f5]/5 transition-colors"
+                className="grid grid-cols-5 py-3 md:py-4 px-3 md:px-6 border-b border-gray-800/30 hover:bg-indigo-500/5 transition-colors"
               >
-                <div className="font-mono text-lg md:text-xl font-normal text-[#403E43] text-center">
+                <div className="font-mono text-lg md:text-xl font-normal text-indigo-200 text-center">
                   {index + 1}
                 </div>
-                <div className="text-base md:text-lg text-[#403E43] text-center">
+                <div className="text-base md:text-lg text-indigo-100/90 text-center">
                   {entry["Country"]}
                 </div>
-                <div className="italic text-base md:text-lg text-[#403E43] text-left">
+                <div className="italic text-base md:text-lg text-indigo-100/90 text-left">
                   {entry["School Name"]}
                 </div>
-                <div className="text-base md:text-lg text-[#403E43] text-center">
+                <div className="text-base md:text-lg text-indigo-100/90 text-center">
                   {entry["Email Domain"]}
                 </div>
-                <div className="font-mono text-lg md:text-xl text-[#7E69AB] font-normal text-right">
+                <div className="font-mono text-lg md:text-xl text-teal-light font-normal text-right">
                   {entry["Activations (BTS 2025 Spring)"]}
                 </div>
               </div>
