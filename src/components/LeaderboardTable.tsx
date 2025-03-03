@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import LeaderboardHeader from "./leaderboard/LeaderboardHeader";
@@ -52,7 +53,13 @@ export function LeaderboardTable() {
         return;
       }
 
-      const sortedData = (data || []).sort((a, b) => {
+      // Filter out entries with no school name or country
+      const filteredData = (data || []).filter(entry => 
+        entry["School Name"] && entry["Country"]
+      );
+
+      // Sort by activations in descending order
+      const sortedData = filteredData.sort((a, b) => {
         const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
         const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
         return bValue - aValue;
@@ -75,7 +82,13 @@ export function LeaderboardTable() {
         (payload) => {
           console.log('New entry:', payload);
           setEntries(current => {
-            const newEntries = [payload.new as LeaderboardEntry, ...current];
+            // Only add the new entry if it has both a school name and country
+            const newEntry = payload.new as LeaderboardEntry;
+            if (!newEntry["School Name"] || !newEntry["Country"]) {
+              return current;
+            }
+            
+            const newEntries = [newEntry, ...current];
             return newEntries.sort((a, b) => {
               const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
               const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
