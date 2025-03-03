@@ -58,12 +58,24 @@ export function LeaderboardTable() {
         entry["School Name"] && entry["Country"]
       );
 
-      // Sort by activations in descending order
+      // Parse activations as numbers for proper sorting
       const sortedData = filteredData.sort((a, b) => {
+        // Convert to numbers and handle any non-numeric values
         const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
         const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-        return bValue - aValue;
+        
+        // Ensure NaN values are treated as 0
+        const aNumber = isNaN(aValue) ? 0 : aValue;
+        const bNumber = isNaN(bValue) ? 0 : bValue;
+        
+        return bNumber - aNumber; // Descending order
       });
+
+      console.log('Sorted data:', sortedData.map(item => ({
+        school: item["School Name"],
+        activations: item["Activations (BTS 2025 Spring)"],
+        parsedActivations: parseInt(item["Activations (BTS 2025 Spring)"] || "0", 10)
+      })));
 
       setEntries(sortedData);
     };
@@ -90,9 +102,15 @@ export function LeaderboardTable() {
             
             const newEntries = [newEntry, ...current];
             return newEntries.sort((a, b) => {
+              // Convert to numbers and handle any non-numeric values
               const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
               const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-              return bValue - aValue;
+              
+              // Ensure NaN values are treated as 0
+              const aNumber = isNaN(aValue) ? 0 : aValue;
+              const bNumber = isNaN(bValue) ? 0 : bValue;
+              
+              return bNumber - aNumber; // Descending order
             });
           });
         }
@@ -109,9 +127,15 @@ export function LeaderboardTable() {
     setSortOrder(newOrder);
     
     const sortedEntries = [...entries].sort((a, b) => {
+      // Convert to numbers and handle any non-numeric values
       const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
       const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-      return newOrder === 'asc' ? aValue - bValue : bValue - aValue;
+      
+      // Ensure NaN values are treated as 0
+      const aNumber = isNaN(aValue) ? 0 : aValue;
+      const bNumber = isNaN(bValue) ? 0 : bValue;
+      
+      return newOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
     });
     
     setEntries(sortedEntries);
