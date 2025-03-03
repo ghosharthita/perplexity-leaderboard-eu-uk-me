@@ -39,6 +39,21 @@ export function LeaderboardTable() {
     getLatestTable();
   }, []);
 
+  // Helper function to sort entries by activation count
+  const sortByActivations = (data: LeaderboardEntry[], order: 'asc' | 'desc' = 'desc') => {
+    return [...data].sort((a, b) => {
+      // Convert to numbers and handle any non-numeric values
+      const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
+      const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
+      
+      // Ensure NaN values are treated as 0
+      const aNumber = isNaN(aValue) ? 0 : aValue;
+      const bNumber = isNaN(bValue) ? 0 : bValue;
+      
+      return order === 'asc' ? aNumber - bNumber : bNumber - aNumber;
+    });
+  };
+
   useEffect(() => {
     if (!latestTable) return;
 
@@ -58,20 +73,10 @@ export function LeaderboardTable() {
         entry["School Name"] && entry["Country"]
       );
 
-      // Parse activations as numbers for proper sorting
-      const sortedData = filteredData.sort((a, b) => {
-        // Convert to numbers and handle any non-numeric values
-        const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
-        const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-        
-        // Ensure NaN values are treated as 0
-        const aNumber = isNaN(aValue) ? 0 : aValue;
-        const bNumber = isNaN(bValue) ? 0 : bValue;
-        
-        return bNumber - aNumber; // Descending order
-      });
+      // Sort data by activations
+      const sortedData = sortByActivations(filteredData, sortOrder);
 
-      console.log('Sorted data:', sortedData.map(item => ({
+      console.log('Filtered and sorted data:', sortedData.map(item => ({
         school: item["School Name"],
         activations: item["Activations (BTS 2025 Spring)"],
         parsedActivations: parseInt(item["Activations (BTS 2025 Spring)"] || "0", 10)
@@ -100,18 +105,9 @@ export function LeaderboardTable() {
               return current;
             }
             
-            const newEntries = [newEntry, ...current];
-            return newEntries.sort((a, b) => {
-              // Convert to numbers and handle any non-numeric values
-              const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
-              const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-              
-              // Ensure NaN values are treated as 0
-              const aNumber = isNaN(aValue) ? 0 : aValue;
-              const bNumber = isNaN(bValue) ? 0 : bValue;
-              
-              return bNumber - aNumber; // Descending order
-            });
+            // Add new entry and re-sort the entire list
+            const updatedEntries = [...current, newEntry];
+            return sortByActivations(updatedEntries, sortOrder);
           });
         }
       )
@@ -120,25 +116,12 @@ export function LeaderboardTable() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [latestTable]);
+  }, [latestTable, sortOrder]);
 
   const handleSort = () => {
     const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newOrder);
-    
-    const sortedEntries = [...entries].sort((a, b) => {
-      // Convert to numbers and handle any non-numeric values
-      const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
-      const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
-      
-      // Ensure NaN values are treated as 0
-      const aNumber = isNaN(aValue) ? 0 : aValue;
-      const bNumber = isNaN(bValue) ? 0 : bValue;
-      
-      return newOrder === 'asc' ? aNumber - bNumber : bNumber - aNumber;
-    });
-    
-    setEntries(sortedEntries);
+    // Sorting will be handled by the useEffect that depends on sortOrder
   };
 
   return (
