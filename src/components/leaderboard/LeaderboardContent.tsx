@@ -15,9 +15,10 @@ interface LeaderboardEntry {
 interface LeaderboardContentProps {
   entries: LeaderboardEntry[];
   onSort: () => void;
+  sortOrder: 'asc' | 'desc';
 }
 
-const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
+const LeaderboardContent = ({ entries, onSort, sortOrder }: LeaderboardContentProps) => {
   if (entries.length === 0) {
     return (
       <div className="flex flex-col items-center gap-6">
@@ -45,6 +46,9 @@ const LeaderboardContent = ({ entries, onSort }: LeaderboardContentProps) => {
                 >
                   Activations
                   <ArrowUpDown className="h-4 w-4" />
+                  <span className="ml-1 text-xs">
+                    {sortOrder === 'desc' ? '(High to Low)' : '(Low to High)'}
+                  </span>
                 </Button>
               </div>
             </div>

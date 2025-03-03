@@ -127,7 +127,7 @@ export function LeaderboardTable() {
   return (
     <div className="max-w-7xl mx-auto font-serif">
       <LeaderboardHeader />
-      <LeaderboardContent entries={entries} onSort={handleSort} />
+      <LeaderboardContent entries={entries} onSort={handleSort} sortOrder={sortOrder} />
     </div>
   );
 }
