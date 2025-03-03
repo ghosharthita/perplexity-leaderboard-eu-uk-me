@@ -39,18 +39,24 @@ export function LeaderboardTable() {
     getLatestTable();
   }, []);
 
+  // Helper function to properly parse activation counts as numbers
+  const parseActivationCount = (value: string | null): number => {
+    if (!value) return 0;
+    
+    // Remove any non-numeric characters except decimal points
+    const numericString = value.replace(/[^\d.]/g, '');
+    const parsedValue = parseFloat(numericString);
+    
+    return isNaN(parsedValue) ? 0 : parsedValue;
+  };
+
   // Helper function to sort entries by activation count
   const sortByActivations = (data: LeaderboardEntry[], order: 'asc' | 'desc' = 'desc') => {
     return [...data].sort((a, b) => {
-      // Convert to numbers and handle any non-numeric values
-      const aValue = parseInt(a["Activations (BTS 2025 Spring)"] || "0", 10);
-      const bValue = parseInt(b["Activations (BTS 2025 Spring)"] || "0", 10);
+      const aValue = parseActivationCount(a["Activations (BTS 2025 Spring)"]);
+      const bValue = parseActivationCount(b["Activations (BTS 2025 Spring)"]);
       
-      // Ensure NaN values are treated as 0
-      const aNumber = isNaN(aValue) ? 0 : aValue;
-      const bNumber = isNaN(bValue) ? 0 : bValue;
-      
-      return order === 'asc' ? aNumber - bNumber : bNumber - aNumber;
+      return order === 'asc' ? aValue - bValue : bValue - aValue;
     });
   };
 
@@ -79,7 +85,7 @@ export function LeaderboardTable() {
       console.log('Filtered and sorted data:', sortedData.map(item => ({
         school: item["School Name"],
         activations: item["Activations (BTS 2025 Spring)"],
-        parsedActivations: parseInt(item["Activations (BTS 2025 Spring)"] || "0", 10)
+        parsedActivations: parseActivationCount(item["Activations (BTS 2025 Spring)"])
       })));
 
       setEntries(sortedData);
